@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 import keras
+from sys import exit
 from keras import backend as K
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
@@ -68,7 +69,7 @@ random_seeds = np.random.random_integers(0, high=1000, size=30)
 print(random_seeds)
 
 descriptors = ['LVR1', 'LVR2', 'LVR3', 'LVR4', 'LVR5', 'LVR6', 'LVR7', 'VB', 'ER1', 'ER2', 'ER3', 'ER4', 'ER5', 'ER6',
-               'ER7', 'SStoutR1', 'SStoutR2', 'SStoutR3', 'SStoutR4', '%up']
+               'ER7', 'SStoutR1', 'SStoutR2', 'SStoutR3', 'SStoutR4', '%top']
 
 data = pd.read_csv(choose_dataset()+'.csv')
 
@@ -76,15 +77,16 @@ data = data.filter(descriptors)
 
 #remove erroneous data
 data = data.dropna(axis=0)
+print(data)
 
 
-X = data.drop(['%up'], axis = 1)
+X = data.drop(['%top'], axis = 1)
 X = RobustScaler().fit_transform(np.array(X))
-y = data['%up']
+y = data['%top']
 print(X)
 print(y)
-best_params = hyperparam_tune(X, y, choose_model(best_params=None)) #hyperparameter tuning completed on whole subset
-
+#best_params = hyperparam_tune(X, y, choose_model(best_params=None)) #hyperparameter tuning completed on whole subset
+best_params = {'max_depth': None, 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 500}
 r2_cv_scores = []
 rmse_cv_scores = []
 r2_val_scores = []
